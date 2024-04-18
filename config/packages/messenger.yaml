@@ -1,0 +1,16 @@
+framework:
+    messenger:
+        buses:
+            command_bus:
+                middleware:
+                    - validation
+                    - doctrine_transaction
+
+
+when@test:
+    framework:
+        messenger:
+            buses:
+                command_bus:
+                    middleware:
+                        - validation

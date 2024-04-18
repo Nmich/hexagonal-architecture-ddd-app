@@ -1,0 +1,20 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Domain\Map\Command\Maps: '@App\Infra\Map\InMemoryMaps'
+    App\Domain\Cartographer\Cartographers: '@App\Infra\Cartographer\InMemoryCartographers'
+    App\Domain\Map\Query\OpenMap: '@App\Infra\Map\InMemoryOpenMap'
+
+    App\Infra\:
+        resource: '../src/Infra/'
+        public: true
+
