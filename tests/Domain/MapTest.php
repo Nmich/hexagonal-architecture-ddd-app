@@ -17,9 +17,8 @@ describe('command - map', function () {
     });
 
     it('adds a marker to the map', function () {
-        $mapId = Uuid::v4();
-        $mapName = 'Bon plan sur Anglet';
-        $map = new Map($mapId, $mapName, [], []);
+        $markerId = Uuid::v4();
+        $map = Map::whatever(markers: [], events: []);
 
         $markerId = Uuid::v4();
         $markerName = 'Sunset';
@@ -28,17 +27,46 @@ describe('command - map', function () {
         $map->addMarker($markerId, $markerName, $latitude, $longitude);
 
         expect($map)->toEqual(
-            new Map(
-                $mapId, $mapName,
-                [new Marker($markerId, new Name($markerName), new Location($latitude, $longitude))],
-                [new MarkerAdded($markerId, new Name($markerName), new Location($latitude, $longitude))]
+            Map::whatever(
+                markers: [Marker::whatever($markerId, 'Sunset', 43.4833, -1.5167)],
+                events: [new MarkerAdded($markerId, new Name($markerName), new Location($latitude, $longitude))],
             )
+        );
+    });
+
+    it('moves a marker to a new location', function () {
+        $markerId = Uuid::v4();
+        $map = Map::whatever(markers: [
+            Marker::whatever(),
+            Marker::whatever($markerId, 'Sunset', 43.4833, -1.5167),
+        ]);
+
+        $map->moveMarker($markerId, 43.4833, -1.5167);
+
+        expect($map)->toEqual(
+            Map::whatever(markers: [
+                Marker::whatever(),
+                Marker::whatever($markerId, 'Sunset', 43.4833, -1.5167)
+            ])
+        );
+    });
+
+    it('removes a marker from the map', function () {
+        $markerId = Uuid::v4();
+        $map = Map::whatever(markers: [
+            Marker::whatever($markerId, 'Sunset', 43.4833, -1.5167),
+        ]);
+
+        $map->removeMarker($markerId);
+
+        expect($map)->toEqual(
+            Map::whatever(markers: [])
         );
     });
 
     test('a map should have the same id to equal another one', function () {
         $id = Uuid::v4();
-        $map = new Map($id, 'map name');
+        $map = Map::whatever($id);
 
         expect($map->equal($id))->toBeTrue()
             ->and($map->equal(Uuid::v4()))->toBeFalse();

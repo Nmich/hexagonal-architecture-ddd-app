@@ -2,6 +2,7 @@
 
 use App\Domain\Map\InMemoryMaps;
 use App\Domain\Map\Map;
+use App\Domain\Map\Marker;
 use App\Domain\Map\UnknownMap;
 use Symfony\Component\Uid\Uuid;
 
@@ -10,7 +11,11 @@ describe('infra - maps', function () {
         $maps = new InMemoryMaps();
 
         $id = Uuid::v4();
-        $map = new Map($id, 'map name');
+        $map = Map::whatever(id: $id, markers: [
+            Marker::whatever(Uuid::v4()),
+            Marker::whatever(Uuid::v4()),
+        ]);
+
 
         $maps->add($map);
 
