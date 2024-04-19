@@ -15,4 +15,8 @@ services:
         exclude:
             - '../src/Domain/'
             - '../src/Kernel.php'
+            - '../src/Infra/Database.php'
+            - '../src/Infra/*/InMemory*'
+
+    App\Domain\Map\Maps: '@App\Infra\Map\DoctrineMaps'
 

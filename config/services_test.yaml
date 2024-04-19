@@ -10,4 +10,11 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\Domain\Map\Maps: '@App\Infra\Map\InMemoryMaps'
+    App\Domain\Clock: '@App\Infra\InMemoryClock'
+    App\Domain\Cartographer\PasswordEncryptor: '@App\Infra\Cartographer\InMemoryPasswordEncryptor'
+
+    App\Infra\:
+        resource: '../src/Infra/'
+        public: true
 

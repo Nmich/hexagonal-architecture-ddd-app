@@ -3,9 +3,10 @@
 namespace App\Infra\Map;
 
 use App\Domain\Map\Map;
+use App\Domain\Map\Maps;
 use App\Domain\Map\UnknownMap;
 
-final class InMemoryMaps
+final class InMemoryMaps implements Maps
 {
     public function __construct(private array $maps = [])
     {

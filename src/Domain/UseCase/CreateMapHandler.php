@@ -3,11 +3,11 @@
 namespace App\Domain\UseCase;
 
 use App\Domain\Map\Map;
-use App\Infra\Map\InMemoryMaps;
+use App\Domain\Map\Maps;
 
 final class CreateMapHandler
 {
-    public function __construct(private readonly InMemoryMaps $maps)
+    public function __construct(private readonly Maps $maps)
     {
     }
 

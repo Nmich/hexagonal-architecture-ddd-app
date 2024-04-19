@@ -48,4 +48,25 @@ final class MarkerList
             $this->markers,
         ));
     }
+
+    public function mapTo(MapState $mapState): void
+    {
+        $existingMarkerIds = [];
+        foreach ($this->markers as $marker) {
+            $existingMarkerIds[] = $marker->id;
+            $doctrineMarker = $mapState->markers->findFirst(
+                fn ($key, MarkerState $doctrineMarker) => $marker->equal($doctrineMarker->markerId)
+            );
+
+            if (!$doctrineMarker) {
+                $mapState->markers->add($marker->mapTo(new MarkerState(map: $mapState)));
+            } else {
+                $marker->mapTo($doctrineMarker);
+            }
+        }
+
+        $mapState->markers = $mapState->markers->filter(
+            fn (MarkerState $doctrineMarker) => in_array($doctrineMarker->markerId, $existingMarkerIds)
+        );
+    }
 }

@@ -5,7 +5,7 @@ namespace App\Domain\Map;
 final class Marker
 {
     public function __construct(
-        private string $id,
+        public readonly string $id,
         private Name $name,
         private Location $location,
         private \DateTimeImmutable $addedAt,
@@ -28,9 +28,35 @@ final class Marker
         return new self($id, new Name($name), new Location($latitude, $longitude), new \DateTimeImmutable($addedAt));
     }
 
+    /**
+     * Using an ORM is not the only way to persist data.
+     * Have a look at https://arnolanglade.github.io/persisting-entities-without-orm.html.
+     */
+    public static function fromState(MarkerState $markerState): self
+    {
+        return new self(
+            $markerState->markerId,
+            new Name($markerState->name),
+            new Location($markerState->latitude, $markerState->longitude),
+            $markerState->addedAt,
+        );
+    }
+
     public function move(float $latitude, float $longitude): void
     {
         $this->location = new Location($latitude, $longitude);
+    }
+
+    public function mapTo(MarkerState $doctrineMarker): MarkerState
+    {
+        list($latitude, $longitude) = $this->location->toState();
+        $doctrineMarker->markerId = $this->id;
+        $doctrineMarker->name = (string) $this->name;
+        $doctrineMarker->latitude = $latitude;
+        $doctrineMarker->longitude = $longitude;
+        $doctrineMarker->addedAt = $this->addedAt;
+
+        return $doctrineMarker;
     }
 
 

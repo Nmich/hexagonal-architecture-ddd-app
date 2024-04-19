@@ -3,14 +3,48 @@
 use App\Domain\Map\Location;
 use App\Domain\Map\Map;
 use App\Domain\Map\MapCreated;
+use App\Domain\Map\MapState;
 use App\Domain\Map\Marker;
 use App\Domain\Map\MarkerAdded;
 use App\Domain\Map\MarkerDeleted;
 use App\Domain\Map\MarkerMoved;
 use App\Domain\Map\Name;
+use App\Domain\Map\MarkerState;
 use Symfony\Component\Uid\Uuid;
 
 describe('command - map', function () {
+    it('creates a map from its state', function () {
+        $map = Map::fromState(new MapState(
+            '5a9cc303-b286-4c15-94a1-baefe5aba425',
+            'Bon plan',
+            [
+                new MarkerState(
+                    '5a9cc303-b286-4c15-94a1-baefe5aba425',
+                    'Sunset',
+                    43.4833,
+                    -1.5167,
+                    '2021-01-01 10:20:30'
+                )
+            ]
+        ));
+
+        expect($map)->toEqual(
+            Map::whatever(
+                '5a9cc303-b286-4c15-94a1-baefe5aba425',
+                'Bon plan',
+                [
+                    Marker::whatever(
+                        '5a9cc303-b286-4c15-94a1-baefe5aba425',
+                        'Sunset',
+                        43.4833,
+                        -1.5167,
+                        '2021-01-01 10:20:30'
+                    )
+                ]
+            )
+        );
+    });
+
     it('creates a map without marker', function () {
         $id = Uuid::v4();
         $name = 'Bon plan sur Anglet';
@@ -72,6 +106,26 @@ describe('command - map', function () {
         expect($map)->toEqual(
             Map::whatever(markers: [], events: [
                 new MarkerDeleted($markerId)
+            ])
+        );
+    });
+
+    it('maps a map to its state', function () {
+        $markerId = Uuid::v4();
+        $markerName = 'Sunset';
+        $latitude = 43.4833;
+        $longitude = -1.5167;
+        $mapId = Uuid::v4();
+        $mapName = 'Bon plan';
+        $addedAt = '2021-01-01 10:20:30';
+        $map = Map::whatever($mapId, $mapName, [Marker::whatever($markerId, $markerName, $latitude, $longitude, $addedAt)]);
+        $doctrineMap = new MapState();
+
+        $map->mapTo($doctrineMap);
+
+        expect($doctrineMap)->toEqual(
+            new MapState($mapId, $mapName, [
+                new MarkerState($markerId, $markerName, $latitude, $longitude, $addedAt, $doctrineMap)
             ])
         );
     });

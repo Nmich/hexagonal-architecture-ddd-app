@@ -5,7 +5,7 @@ namespace App\Domain\Map;
 final class Map
 {
     public function __construct(
-        private readonly string $id,
+        public readonly string $id,
         private readonly Name $name,
         private MarkerList $markers,
         private array $events = [],
@@ -25,6 +25,22 @@ final class Map
         array $events = [],
     ): self {
         return new self($id, new Name($name), MarkerList::fromArray($markers), $events);
+    }
+    /**
+     * Using an ORM is not the only way to persist data.
+     * Have a look at https://arnolanglade.github.io/persisting-entities-without-orm.html.
+     */
+    public static function fromState(MapState $mapState): self
+    {
+        $markers = $mapState->markers->map(
+            fn (MarkerState $marker) => Marker::fromState($marker)
+        );
+
+        return new self(
+            $mapState->mapId,
+            new Name($mapState->name),
+            MarkerList::fromArray($markers->toArray())
+        );
     }
 
     public static function create(string $id, string $name): self
@@ -63,6 +79,14 @@ final class Map
         $this->events[] = new MarkerDeleted($markerId);
     }
 
+
+    public function mapTo(MapState $mapState): void
+    {
+        $mapState->mapId = $this->id;
+        $mapState->name = $this->name;
+
+        $this->markers->mapTo($mapState);
+    }
 
     public function equal(string $id): bool
     {

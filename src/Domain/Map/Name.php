@@ -11,4 +11,9 @@ final class Name
             throw new \InvalidArgumentException('Name cannot be empty');
         }
     }
+
+    public function __toString(): string
+    {
+        return $this->name;
+    }
 }

@@ -3,14 +3,14 @@
 namespace App\Domain\UseCase;
 
 use App\Domain\Clock;
+use App\Domain\Map\Maps;
 use App\Domain\Map\MarkerLocationDatabaseClient;
 use App\Domain\Map\UnknownMap;
-use App\Infra\Map\InMemoryMaps;
 
 final class AddMarkerToMapHandler
 {
     public function __construct(
-        private readonly InMemoryMaps $maps,
+        private readonly Maps $maps,
         private MarkerLocationDatabaseClient $markerLocationDatabaseClient,
         private Clock $clock
     ) {

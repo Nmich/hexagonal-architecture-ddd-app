@@ -2,12 +2,12 @@
 
 namespace App\Domain\UseCase;
 
+use App\Domain\Map\Maps;
 use App\Domain\Map\UnknownMap;
-use App\Infra\Map\InMemoryMaps;
 
 final class RemoveMarkerHandler
 {
-    public function __construct(private readonly InMemoryMaps $maps)
+    public function __construct(private readonly Maps $maps)
     {
     }
 
