@@ -9,6 +9,7 @@ use App\Domain\Map\MarkerAdded;
 use App\Domain\Map\MarkerDeleted;
 use App\Domain\Map\MarkerMoved;
 use App\Domain\Map\Name;
+use App\Domain\Map\MarkerLocationDatabaseClient;
 use App\Domain\UseCase\AddMarkerToMap;
 use App\Domain\UseCase\AddMarkerToMapHandler;
 use App\Domain\UseCase\CreateMap;
@@ -17,6 +18,8 @@ use App\Domain\UseCase\MoveMarker;
 use App\Domain\UseCase\MoveMarkerHandler;
 use App\Domain\UseCase\RemoveMarker;
 use App\Domain\UseCase\RemoveMarkerHandler;
+use App\Infra\Map\DummyMarkerLocationDatabaseClient;
+use App\Infra\Map\MockMarkerLocationDatabaseClient;
 use Symfony\Component\Uid\Uuid;
 
 describe('map use cases', function () {
@@ -30,7 +33,7 @@ describe('map use cases', function () {
         expect($maps->get($id))->toEqual(Map::whatever($id, $name, [], [new MapCreated($id, $name)]));
     });
 
-    test('a cartographer adds marker to a map', function () {
+    test('a cartographer adds marker to a map [dummy]', function () {
         $mapId = Uuid::v4();
         $maps = new InMemoryMaps([Map::whatever(id: $mapId, markers: [])]);
 
@@ -38,12 +41,60 @@ describe('map use cases', function () {
         $name = 'Sunset';
         $latitude = 43.4833;
         $longitude = -1.5167;
-        (new AddMarkerToMapHandler($maps))(new AddMarkerToMap($mapId, $markerId, $name, $latitude, $longitude));
+        (new AddMarkerToMapHandler(
+            $maps,
+            new DummyMarkerLocationDatabaseClient()
+        ))(new AddMarkerToMap($mapId, $markerId, $name, $latitude, $longitude));
 
         expect($maps->get($mapId))->toEqual(Map::whatever(id: $mapId,
             markers: [Marker::whatever($markerId, $name, $latitude, $longitude)],
             events: [new MarkerAdded($markerId, new Name($name), new Location($latitude, $longitude))]
         ));
+    });
+
+    test('a cartographer adds marker to a map [mock handmade]', function () {
+        $mapId = Uuid::v4();
+        $maps = new InMemoryMaps([Map::whatever(id: $mapId, markers: [])]);
+        $markerLocationDatabaseClient = new MockMarkerLocationDatabaseClient();
+
+        $markerId = Uuid::v4();
+        $name = 'Sunset';
+        $latitude = 43.4833;
+        $longitude = -1.5167;
+        (new AddMarkerToMapHandler(
+            $maps,
+            $markerLocationDatabaseClient
+        ))(new AddMarkerToMap($mapId, $markerId, $name, $latitude, $longitude));
+
+        expect($maps->get($mapId))
+            ->toEqual(Map::whatever(id: $mapId, markers: [
+                Marker::whatever($markerId, $name, $latitude, $longitude)
+            ]))
+            ->and($markerLocationDatabaseClient->isCalledWith($markerId, $name, $latitude, $longitude))->toBeTrue();
+    });
+
+    test('a cartographer adds marker to a map [mock mockery]', function () {
+        $mapId = Uuid::v4();
+        $maps = new InMemoryMaps([Map::whatever(id: $mapId, markers: [])]);
+        $markerLocationDatabaseClient = Mockery::mock(MarkerLocationDatabaseClient::class);
+
+        $markerId = Uuid::v4();
+        $name = 'Sunset';
+        $latitude = 43.4833;
+        $longitude = -1.5167;
+
+        $markerLocationDatabaseClient->shouldReceive('send')
+            ->with((string) $markerId, $name, $latitude, $longitude);
+
+        (new AddMarkerToMapHandler(
+            $maps,
+            $markerLocationDatabaseClient
+        ))(new AddMarkerToMap($mapId, $markerId, $name, $latitude, $longitude));
+
+        expect($maps->get($mapId))
+            ->toEqual(Map::whatever(id: $mapId, markers: [
+                Marker::whatever($markerId, $name, $latitude, $longitude)
+            ]));
     });
 
     test('a cartographer moves marker to a new location', function () {
