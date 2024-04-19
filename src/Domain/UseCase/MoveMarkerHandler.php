@@ -2,8 +2,8 @@
 
 namespace App\Domain\UseCase;
 
-use App\Domain\Map\InMemoryMaps;
 use App\Domain\Map\UnknownMap;
+use App\Infra\Map\InMemoryMaps;
 
 final class MoveMarkerHandler
 {

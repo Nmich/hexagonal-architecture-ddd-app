@@ -2,15 +2,17 @@
 
 namespace App\Domain\UseCase;
 
-use App\Domain\Map\InMemoryMaps;
+use App\Domain\Clock;
 use App\Domain\Map\MarkerLocationDatabaseClient;
 use App\Domain\Map\UnknownMap;
+use App\Infra\Map\InMemoryMaps;
 
 final class AddMarkerToMapHandler
 {
     public function __construct(
         private readonly InMemoryMaps $maps,
-        private MarkerLocationDatabaseClient $markerLocationDatabaseClient
+        private MarkerLocationDatabaseClient $markerLocationDatabaseClient,
+        private Clock $clock
     ) {
     }
 
@@ -24,7 +26,8 @@ final class AddMarkerToMapHandler
             $addMarkerToMap->markerId,
             $addMarkerToMap->name,
             $addMarkerToMap->latitude,
-            $addMarkerToMap->longitude
+            $addMarkerToMap->longitude,
+            $this->clock->now(),
         );
 
         $this->markerLocationDatabaseClient->send(

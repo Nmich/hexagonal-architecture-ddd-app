@@ -25,11 +25,12 @@ describe('command - map', function () {
         $markerName = 'Sunset';
         $latitude = 43.4833;
         $longitude = -1.5167;
-        $map->addMarker($markerId, $markerName, $latitude, $longitude);
+        $addedAt = '2021-01-01 10:20:30';
+        $map->addMarker($markerId, $markerName, $latitude, $longitude, new \DateTimeImmutable($addedAt));
 
         expect($map)->toEqual(
             Map::whatever(
-                markers: [Marker::whatever($markerId, 'Sunset', 43.4833, -1.5167)],
+                markers: [Marker::whatever($markerId, $markerName, $latitude, $longitude, $addedAt)],
                 events: [new MarkerAdded($markerId, new Name($markerName), new Location($latitude, $longitude))],
             )
         );

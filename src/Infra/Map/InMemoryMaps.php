@@ -1,6 +1,9 @@
 <?php
 
-namespace App\Domain\Map;
+namespace App\Infra\Map;
+
+use App\Domain\Map\Map;
+use App\Domain\Map\UnknownMap;
 
 final class InMemoryMaps
 {

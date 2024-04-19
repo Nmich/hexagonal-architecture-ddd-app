@@ -32,13 +32,13 @@ final class Map
         return new self($id, new Name($name), MarkerList::empty(), [new MapCreated($id, $name)]);
     }
 
-    public function addMarker(string $markerId, string $name, float $latitude, float $longitude): void
+    public function addMarker(string $markerId, string $name, float $latitude, float $longitude, \DateTimeImmutable $addedAt): void
     {
         $name = new Name($name);
         $location = new Location($latitude, $longitude);
 
         $this->markers = $this->markers->add(
-            new Marker($markerId, $name, new Location($latitude, $longitude))
+            new Marker($markerId, $name, new Location($latitude, $longitude), $addedAt)
         );
 
         $this->events[] = new MarkerAdded($markerId, $name, $location);

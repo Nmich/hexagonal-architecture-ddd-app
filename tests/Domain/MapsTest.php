@@ -1,9 +1,9 @@
 <?php
 
-use App\Domain\Map\InMemoryMaps;
 use App\Domain\Map\Map;
 use App\Domain\Map\Marker;
 use App\Domain\Map\UnknownMap;
+use App\Infra\Map\InMemoryMaps;
 use Symfony\Component\Uid\Uuid;
 
 describe('infra - maps', function () {

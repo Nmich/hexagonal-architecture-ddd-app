@@ -8,6 +8,7 @@ final class Marker
         private string $id,
         private Name $name,
         private Location $location,
+        private \DateTimeImmutable $addedAt,
     ) {
     }
 
@@ -22,8 +23,9 @@ final class Marker
         string $name = 'Sunset',
         float $latitude = 48.8534,
         float $longitude = 2.3488,
+        string $addedAt = '2021-01-01 00:00:00',
     ): self {
-        return new self($id, new Name($name), new Location($latitude, $longitude));
+        return new self($id, new Name($name), new Location($latitude, $longitude), new \DateTimeImmutable($addedAt));
     }
 
     public function move(float $latitude, float $longitude): void
