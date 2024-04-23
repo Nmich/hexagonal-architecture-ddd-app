@@ -10,11 +10,4 @@ services:
         autowire: true
         autoconfigure: true
 
-    App\Domain\Map\Command\Maps: '@App\Infra\Map\InMemoryMaps'
-    App\Domain\Cartographer\Cartographers: '@App\Infra\Cartographer\InMemoryCartographers'
-    App\Domain\Map\Query\OpenMap: '@App\Infra\Map\InMemoryOpenMap'
-
-    App\Infra\:
-        resource: '../src/Infra/'
-        public: true
 

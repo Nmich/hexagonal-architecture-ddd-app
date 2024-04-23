@@ -10,25 +10,9 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    _instanceof:
-        App\Library\BusinessRule:
-            tags: ['business_rules']
-
     App\:
         resource: '../src/'
         exclude:
             - '../src/Domain/'
             - '../src/Kernel.php'
-            - '../src/Infra/Database.php'
-            - '../src/Infra/*/InMemory*'
 
-    App\Domain\UseCase\:
-        resource: '../src/Domain/UseCase/*{Handler,BusinessRules}.php'
-
-    App\Domain\Map\Command\Maps: '@App\Infra\Map\DoctrineMaps'
-    App\Domain\Cartographer\Cartographers: '@App\Infra\Cartographer\DoctrineCartographers'
-    App\Domain\Map\Query\OpenMap: '@App\Infra\Map\DoctrineOpenMap'
-
-    App\Library\CommandValidator:
-        arguments:
-            - !tagged_iterator business_rules

@@ -9,10 +9,3 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-
-    App\Infra\:
-        resource: '../src/Infra/'
-        public: true
-
-    App\Infra\Database:
-        public: true
