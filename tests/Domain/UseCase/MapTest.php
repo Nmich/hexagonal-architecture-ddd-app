@@ -1,10 +1,13 @@
 <?php
 
 use App\Domain\Map\InMemoryMaps;
+use App\Domain\Map\Location;
 use App\Domain\Map\Map;
 use App\Domain\Map\MapCreated;
 use App\Domain\Map\Marker;
 use App\Domain\Map\MarkerAdded;
+use App\Domain\Map\MarkerDeleted;
+use App\Domain\Map\MarkerMoved;
 use App\Domain\Map\Name;
 use App\Domain\UseCase\AddMarkerToMap;
 use App\Domain\UseCase\AddMarkerToMapHandler;

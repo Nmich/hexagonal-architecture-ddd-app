@@ -29,7 +29,7 @@ final class Map
 
     public static function create(string $id, string $name): self
     {
-        return new self($id, $name, MarkerList::empty(), [new MapCreated($id, $name)]);
+        return new self($id, new Name($name), MarkerList::empty(), [new MapCreated($id, $name)]);
     }
 
     public function addMarker(string $markerId, string $name, float $latitude, float $longitude): void
@@ -38,7 +38,7 @@ final class Map
         $location = new Location($latitude, $longitude);
 
         $this->markers = $this->markers->add(
-            new Marker($markerId, $name, $latitude, $longitude)
+            new Marker($markerId, $name, new Location($latitude, $longitude))
         );
 
         $this->events[] = new MarkerAdded($markerId, $name, $location);
@@ -48,8 +48,9 @@ final class Map
     {
         $this->markers = $this->markers->update(
             $markerId,
-            function (Marker $marker) use ($longitude, $latitude) {
+            function (Marker $marker) use ($longitude, $latitude, $markerId) {
                 $marker->move($latitude, $longitude);
+                $this->events[] = new MarkerMoved($markerId, new Location($latitude, $longitude));
 
                 return $marker;
             }
@@ -59,6 +60,7 @@ final class Map
     public function removeMarker(string $markerId): void
     {
         $this->markers = $this->markers->remove($markerId);
+        $this->events[] = new MarkerDeleted($markerId);
     }
 
 
