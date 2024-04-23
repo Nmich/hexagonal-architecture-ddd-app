@@ -67,9 +67,10 @@ describe('map use cases', function () {
         ))(new AddMarkerToMap($mapId, $markerId, $name, $latitude, $longitude));
 
         expect($maps->get($mapId))
-            ->toEqual(Map::whatever(id: $mapId, markers: [
-                Marker::whatever($markerId, $name, $latitude, $longitude)
-            ]))
+            ->toEqual(Map::whatever(id: $mapId,
+                markers: [ Marker::whatever($markerId, $name, $latitude, $longitude)],
+                events: [new MarkerAdded($markerId, new Name($name), new Location($latitude, $longitude))]
+            ))
             ->and($markerLocationDatabaseClient->isCalledWith($markerId, $name, $latitude, $longitude))->toBeTrue();
     });
 
@@ -92,9 +93,10 @@ describe('map use cases', function () {
         ))(new AddMarkerToMap($mapId, $markerId, $name, $latitude, $longitude));
 
         expect($maps->get($mapId))
-            ->toEqual(Map::whatever(id: $mapId, markers: [
-                Marker::whatever($markerId, $name, $latitude, $longitude)
-            ]));
+            ->toEqual(Map::whatever(id: $mapId,
+                markers: [ Marker::whatever($markerId, $name, $latitude, $longitude)],
+                events: [new MarkerAdded($markerId, new Name($name), new Location($latitude, $longitude))],
+            ));
     });
 
     test('a cartographer moves marker to a new location', function () {
