@@ -20,7 +20,11 @@ final class Map
 
     public function addMarker(string $markerId, string $name, float $latitude, float $longitude): void
     {
-        $this->markers[] = new Marker($markerId, new Name($name), new Location($latitude, $longitude));
+        $name = new Name($name);
+        $location = new Location($latitude, $longitude);
+
+        $this->markers[] = new Marker($markerId, $name, $location);
+        $this->events[] = new MarkerAdded($markerId, $name, $location);
     }
 
     public function equal(string $id): bool

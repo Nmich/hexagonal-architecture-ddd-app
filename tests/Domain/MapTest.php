@@ -2,9 +2,10 @@
 
 use App\Domain\Map\Location;
 use App\Domain\Map\Map;
-use App\Domain\Map\Marker;
-use App\Domain\Map\Name;
 use App\Domain\Map\MapCreated;
+use App\Domain\Map\Marker;
+use App\Domain\Map\MarkerAdded;
+use App\Domain\Map\Name;
 use Symfony\Component\Uid\Uuid;
 
 describe('command - map', function () {
@@ -18,7 +19,7 @@ describe('command - map', function () {
     it('adds a marker to the map', function () {
         $mapId = Uuid::v4();
         $mapName = 'Bon plan sur Anglet';
-        $map = new Map($mapId, $mapName, []);
+        $map = new Map($mapId, $mapName, [], []);
 
         $markerId = Uuid::v4();
         $markerName = 'Sunset';
@@ -29,7 +30,8 @@ describe('command - map', function () {
         expect($map)->toEqual(
             new Map(
                 $mapId, $mapName,
-                [new Marker($markerId, new Name($markerName), new Location($latitude, $longitude))]
+                [new Marker($markerId, new Name($markerName), new Location($latitude, $longitude))],
+                [new MarkerAdded($markerId, new Name($markerName), new Location($latitude, $longitude))]
             )
         );
     });

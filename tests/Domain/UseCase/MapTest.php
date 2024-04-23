@@ -3,11 +3,12 @@
 use App\Domain\Map\InMemoryMaps;
 use App\Domain\Map\Location;
 use App\Domain\Map\Map;
+use App\Domain\Map\MapCreated;
 use App\Domain\Map\Marker;
+use App\Domain\Map\MarkerAdded;
 use App\Domain\Map\Name;
 use App\Domain\UseCase\AddMarkerToMap;
 use App\Domain\UseCase\AddMarkerToMapHandler;
-use App\Domain\Map\MapCreated;
 use App\Domain\UseCase\CreateMap;
 use App\Domain\UseCase\CreateMapHandler;
 use Symfony\Component\Uid\Uuid;
@@ -34,8 +35,11 @@ describe('map use cases', function () {
         $longitude = -1.5167;
         (new AddMarkerToMapHandler($maps))(new AddMarkerToMap($mapId, $markerId, $name, $latitude, $longitude));
 
-        expect($maps->get($mapId))->toEqual(new Map($mapId, $mapName, [
-            new Marker($markerId, new Name($name), new Location($latitude, $longitude))
-        ]));
+        expect($maps->get($mapId))->toEqual(new Map(
+            $mapId,
+            $mapName,
+            [new Marker($markerId, new Name($name), new Location($latitude, $longitude))],
+            [new MarkerAdded($markerId, new Name($name), new Location($latitude, $longitude))]
+        ));
     });
 });
