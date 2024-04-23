@@ -13,6 +13,6 @@ final class CreateMapHandler
 
     public function __invoke(CreateMap $createMap): void
     {
-        $this->maps->add(new Map($createMap->id, $createMap->name));
+        $this->maps->add(Map::create($createMap->id, $createMap->name));
     }
 }
