@@ -7,16 +7,18 @@ class Cartographer
     public function __construct(
         private readonly string $id,
         private Username $username,
-        private string $password,
+        private Password $password,
+        private array $events = [],
     ) {
     }
 
     public static function whatever(
         string $id = '0cfc162d-77ee-4ba4-ad90-c5af12eb0af8',
         string $username = 'arn0',
-        string $password = 'password',
+        string $password = '$2a$12$pTBZuTRRWbdtQ8VPaZSzOe.PNebOr/yDNZvU6tq0R/XzX9l5fWDlS',
+        array $events = [],
     ): self {
-        return new self($id, new Username($username), $password);
+        return new self($id, new Username($username), Password::fromHash($password), $events);
     }
 
     public static function register(
@@ -25,7 +27,14 @@ class Cartographer
         string $password,
         PasswordEncryptor $passwordEncryptor,
     ): self {
-        return new self($id, new Username($username), Password::fromString($password, $passwordEncryptor));
+        $username = new Username($username);
+
+        return new self(
+            $id,
+            $username,
+            Password::fromString($password, $passwordEncryptor),
+            [new CartographerRegistered($id, $username)]
+        );
     }
 
     public function equal(string $id): bool

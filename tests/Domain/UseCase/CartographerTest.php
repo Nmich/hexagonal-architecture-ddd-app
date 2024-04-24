@@ -1,7 +1,9 @@
 <?php
 
 use App\Domain\Cartographer\Cartographer;
+use App\Domain\Cartographer\CartographerRegistered;
 use App\Domain\Cartographer\PasswordEncryptor;
+use App\Domain\Cartographer\Username;
 use App\Domain\UseCase\RegisterCartographer;
 use App\Domain\UseCase\RegisterCartographerHandler;
 use App\Infra\Cartographer\InMemoryCartographers;
@@ -20,7 +22,9 @@ describe('cartographer use cases', function () {
             new InMemoryPasswordEncryptor()
         ))(new RegisterCartographer($id, $username, $password));
 
-        expect($inMemoryCartographer->get($id))->toEqual(Cartographer::whatever($id, $username, $password));
+        expect($inMemoryCartographer->get($id))->toEqual(Cartographer::whatever($id, $username, $password, [
+            new CartographerRegistered($id, new Username($username))
+        ]));
     });
 
     test('a cartographer registers on the application [stub]', function () {
@@ -38,6 +42,8 @@ describe('cartographer use cases', function () {
             $passwordEncryptor
         ))(new RegisterCartographer($id, $username, $password));
 
-        expect($inMemoryCartographer->get($id))->toEqual(Cartographer::whatever($id, $username, $password));
+        expect($inMemoryCartographer->get($id))->toEqual(Cartographer::whatever($id, $username, $password, [
+            new CartographerRegistered($id, new Username($username))
+        ]));
     });
 });
